@@ -4,7 +4,7 @@ import CounterActions from "../../components/counter/CounterActions";
 import './Counter.css'
 const Counter = () => {
   const [count, setCount] = useState(0);
-
+ 
   const increment = () => {
     setCount(count + 1);
   };

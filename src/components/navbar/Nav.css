@@ -1,0 +1,24 @@
+.navbar-wrapper{
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 20px;
+    width: 80%;
+    margin: 0 auto 10px auto;
+    background-color: rgb(195, 230, 230);
+}
+
+.nav-list{
+    display: flex;
+}
+
+.nav-list li{
+    margin: 0 15px;
+    list-style: none;
+    font-size: 25px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.nav-list li a{
+    text-decoration: none;
+}
