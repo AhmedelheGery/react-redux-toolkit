@@ -9,8 +9,6 @@ const Product = () => {
     fetchProduct();
   }, []);
 
-
-
   const fetchProduct = () => {
     fetch(`https://fakestoreapi.com/products/${urlParams.id}`)
       .then((res) => res.json())
