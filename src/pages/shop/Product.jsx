@@ -15,7 +15,9 @@ const Product = () => {
       .then((json) => setProduct(json));
   };
 
-  const [product, setProduct] = useState(null);
+  const [product, setProduct] = useState({});
+
+  const {image,title} = product;
   return (
     <div className='product d-flex justify-content-center'>
       {product ? (
@@ -23,10 +25,10 @@ const Product = () => {
           <Card.Img
             className='w-50 mx-auto'
             variant='top'
-            src={product.image}
+            src={image}
           />
           <Card.Body>
-            <Card.Title>{product.title}</Card.Title>
+            <Card.Title>{title}</Card.Title>
             <hr />
             <Card.Text>{product.description}</Card.Text>
             <hr />

@@ -1,70 +1,200 @@
-# Getting Started with Create React App
+# Redux Toolkit
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+#### Docs
 
-## Available Scripts
+[Redux Toolkit Docs](https://redux-toolkit.js.org/introduction/getting-started)
 
-In the project directory, you can run:
+#### Install Template
 
-### `npm start`
+```sh
+npx create-react-app my-app --template redux
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- @latest
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```sh
+npx create-react-app@latest my-app --template redux
+```
 
-### `npm test`
+#### Existing App
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```sh
+npm install @reduxjs/toolkit react-redux
+```
 
-### `npm run build`
+#### @reduxjs/toolkit
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+consists of few libraries
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- redux (core library, state management)
+- immer (allows to mutate state)
+- redux-thunk (handles async actions)
+- reselect (simplifies reducer functions)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+#### Extras
 
-### `npm run eject`
+- redux devtools
+- combine reducers
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+#### react-redux
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+connects our app to redux
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+#### Setup Store
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- create store.js
 
-## Learn More
+```js
+import { configureStore } from '@reduxjs/toolkit';
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+export const store = configureStore({
+  reducer: {},
+});
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+#### Setup Provider
 
-### Code Splitting
+- index.js
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import App from './App';
+// import store and provider
+import { store } from './store';
+import { Provider } from 'react-redux';
 
-### Analyzing the Bundle Size
+ReactDOM.render(
+  <React.StrictMode>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </React.StrictMode>,
+  document.getElementById('root')
+);
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+#### First Reducer
 
-### Making a Progressive Web App
+```js
+import { createSlice } from '@reduxjs/toolkit';
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+// INITIAL STATE
+const initialState = {
+  todos: [
+    {
+      title: 'learn node js',
+      content: 'Lorem ipsum dolor sit amet.',
+    },
+    {
+      title: 'go to the sea',
+      content: 'Lorem ipsum dolor sit amet.',
+    },
+    {
+      title: 'walk the dog',
+      content: 'Lorem ipsum dolor sit amet.',
+    },
+  ],
+};
 
-### Advanced Configuration
+const todoSlice = createSlice({
+  name: 'todo',
+  initialState,
+  reducers: {
+    addTodo: (state, action) => {
+      console.log('action', action)
+      state.todos.push(action.payload);
+    },
+    deleteTodo: (state, action) => {
+      state.todos = state.todos.filter(
+        (item, index) => index !== action.payload
+      );
+    },
+  },
+});
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
 
-### Deployment
+export const { addTodo, deleteTodo } = todoSlice.actions;
+export default todoSlice.reducer;
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
-### `npm run build` fails to minify
+#### async functionality with createAsyncThunk
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+```js
+import {createSlice, createAsyncThunk} from '@reduxjs/toolkit'
+
+const baseURL = 'https://fakestoreapi.com'
+
+export const getShopItems = createAsyncThunk('shop/getShopItems', () => {
+   return fetch(`${baseURL}/products`)
+    .then((res) => res.json())
+    .then((json) => json)
+    .catch(err=>console.log(err))
+})
+
+const initialState = {
+    products: [],
+    loading: false,
+    err:{}
+}
+
+const shopSlice = createSlice({
+    name: 'shop',
+    initialState,
+    reducers:{
+        addProduct : () => {
+            console.log('add produc')
+        }
+    },
+    extraReducers: {
+        [getShopItems.pending] : (state) => {
+            // pending
+            state.loading = true
+        },
+        [getShopItems.fulfilled] : (state, action) => {
+            // fulfilled
+            state.products = action.payload
+            state.loading = false
+        },
+        [getShopItems.rejected] : (state, action) => {
+            // rejected
+            state.err = action.payload
+            state.loading = false
+        },
+    }
+})
+
+export const { addProduct } = shopSlice.actions
+
+export default shopSlice.reducer
+```
+
+#### Options
+
+```sh
+npm install axios
+```
+
+- cartSlice.js
+
+```js
+export const getShopItems = createAsyncThunk(
+  'cart/getShopItems',
+  async (name, thunkAPI) => {
+    try {
+      // console.log(name);
+      // console.log(thunkAPI);
+      // console.log(thunkAPI.getState());
+      // thunkAPI.dispatch(openModal());
+      const resp = await axios(`baseURL/${products}`);
+
+      return resp.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue('something went wrong');
+    }
+  }
+);
+```
