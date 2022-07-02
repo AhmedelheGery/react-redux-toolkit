@@ -18,6 +18,10 @@ const Navbar = () => {
         <li>
         <Link to='/support'>Support</Link>
         </li>
+        <li>
+        <Link to='/register'>Signup</Link>
+        </li>
+        
       </ul>
     </div>
   );
